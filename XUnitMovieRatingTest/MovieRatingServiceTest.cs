@@ -8,6 +8,7 @@ using MovieRatingProject.Core.Entities;
 using MovieRatingProject.Core.DomainService;
 using MovieRatingProject.Core.ApplicationService;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
+using System.Globalization;
 
 namespace XUnitMovieRatingTest
 {
@@ -340,12 +341,82 @@ namespace XUnitMovieRatingTest
         #endregion
 
         #region 9. On input N, what is top N of movies? The score of a movie is its average rate.
-        public void GetTopRatedMovies(int amount)
+        //public void GetTopRatedMovies(int amount)
+        //{
+
+
+        //}
+
+        #endregion
+
+        #region 10. On input N, what are the movies that reviewer N has reviewed? 
+        //The list should be sorted decreasing by rate first, and date secondly.
+        [Theory]
+        [InlineData(2, new int[] { 4, 2, 1, 3 })]
+        [InlineData(3, new int[] { 3, 2 })]
+        [InlineData(4, new int[] { 4, 3, 1, 2 })]
+
+        public void GetTopMoviesByReviewer(int reviewer, int[] expected)
         {
+            ratings = new List<MovieRating>()
+            {
+               new MovieRating(2, 1, 5, DateTime.Now),
+               new MovieRating(2, 2, 5, DateTime.Now),
+               new MovieRating(2, 3, 4, DateTime.Now),
+               new MovieRating(2, 4, 5, DateTime.Now),
 
+               new MovieRating(3, 2, 1, DateTime.Now),
+               new MovieRating(3, 3, 5, DateTime.Now),
 
+               new MovieRating(4, 4, 5, DateTime.Parse("31/01/1999", new CultureInfo("da-DK"))),
+               new MovieRating(4, 3, 5, DateTime.Parse("31/01/1998", new CultureInfo("da-DK"))),
+               new MovieRating(4, 2, 4, DateTime.Parse("31/01/1997", new CultureInfo("da-DK"))),
+               new MovieRating(4, 1, 5, DateTime.Parse("31/01/1996", new CultureInfo("da-DK"))),
+            };
+
+            MovieRatingService mrs = new MovieRatingService(repoMock.Object);
+
+            var result = mrs.GetTopMoviesByReviewer(reviewer).ToArray();
+
+            Assert.Equal(expected, result);
+            repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Once);
         }
 
         #endregion
+
+        #region 11. On input N, who are the reviewers that have reviewed movie N? 
+        //The list should be sorted decreasing by rate first, and date secondly.
+        [Theory]
+        [InlineData(2, new int[] { 2, 4, 3})]
+        [InlineData(1, new int[] { 2, 4 })]
+        [InlineData(4, new int[] { 4 })]
+        public void GetReviewersByMovie(int movie, int[] expected)
+        {
+            ratings = new List<MovieRating>()
+            {
+               new MovieRating(2, 1, 5, DateTime.Now),
+               new MovieRating(2, 2, 5, DateTime.Now),
+               new MovieRating(2, 3, 4, DateTime.Now),
+
+               new MovieRating(3, 2, 1, DateTime.Now),
+               new MovieRating(3, 3, 5, DateTime.Now),
+
+               new MovieRating(4, 4, 5, DateTime.Parse("31/01/1999", new CultureInfo("da-DK"))),
+               new MovieRating(4, 3, 5, DateTime.Parse("31/01/1998", new CultureInfo("da-DK"))),
+               new MovieRating(4, 2, 4, DateTime.Parse("31/01/1997", new CultureInfo("da-DK"))),
+               new MovieRating(4, 1, 5, DateTime.Parse("31/01/1996", new CultureInfo("da-DK"))),
+            };
+
+            MovieRatingService mrs = new MovieRatingService(repoMock.Object);
+
+            var result = mrs.GetReviewersByMovie(movie).ToArray();
+
+            Assert.Equal(expected, result);
+            repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Once);
+        }
+
+        #endregion
+
+
     }
 }
