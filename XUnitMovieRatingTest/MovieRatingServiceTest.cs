@@ -382,6 +382,32 @@ namespace XUnitMovieRatingTest
             repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Once);
         }
 
+        [Fact]
+        public void GetTopMoviesByReviewerExpectingArgumentException()
+        {
+            ratings = new List<MovieRating>()
+            {
+               new MovieRating(2, 1, 5, DateTime.Now),
+               new MovieRating(2, 2, 5, DateTime.Now),
+               new MovieRating(2, 3, 4, DateTime.Now),
+               new MovieRating(2, 4, 5, DateTime.Now),
+
+               new MovieRating(3, 2, 1, DateTime.Now),
+               new MovieRating(3, 3, 5, DateTime.Now),
+
+               new MovieRating(4, 4, 5, DateTime.Parse("31/01/1999", new CultureInfo("da-DK"))),
+               new MovieRating(4, 3, 5, DateTime.Parse("31/01/1998", new CultureInfo("da-DK"))),
+               new MovieRating(4, 2, 4, DateTime.Parse("31/01/1997", new CultureInfo("da-DK"))),
+               new MovieRating(4, 1, 5, DateTime.Parse("31/01/1996", new CultureInfo("da-DK"))),
+            };
+
+            MovieRatingService mrs = new MovieRatingService(repoMock.Object);
+
+            var ex = Assert.Throws<ArgumentException>(() => { List<int> result = mrs.GetTopMoviesByReviewer(1); });
+
+            Assert.Equal("This reviewer has not made any reviews yet.", ex.Message);
+        }
+
         #endregion
 
         #region 11. On input N, who are the reviewers that have reviewed movie N? 
@@ -415,6 +441,30 @@ namespace XUnitMovieRatingTest
             repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Once);
         }
 
+        [Fact]
+        public void GetReviewersByMovieExpectingArgumentException()
+        {
+            ratings = new List<MovieRating>()
+            {
+               new MovieRating(2, 4, 5, DateTime.Now),
+               new MovieRating(2, 2, 5, DateTime.Now),
+               new MovieRating(2, 3, 4, DateTime.Now),
+
+               new MovieRating(3, 2, 1, DateTime.Now),
+               new MovieRating(3, 3, 5, DateTime.Now),
+
+               new MovieRating(4, 4, 5, DateTime.Parse("31/01/1999", new CultureInfo("da-DK"))),
+               new MovieRating(4, 3, 5, DateTime.Parse("31/01/1998", new CultureInfo("da-DK"))),
+               new MovieRating(4, 2, 4, DateTime.Parse("31/01/1997", new CultureInfo("da-DK"))),
+               new MovieRating(4, 5, 5, DateTime.Parse("31/01/1996", new CultureInfo("da-DK"))),
+            };
+
+            MovieRatingService mrs = new MovieRatingService(repoMock.Object);
+
+            var ex = Assert.Throws<ArgumentException>(() => { List<int> result = mrs.GetReviewersByMovie(1); });
+
+            Assert.Equal("No reviews for this movie.", ex.Message);
+        }
         #endregion
 
 

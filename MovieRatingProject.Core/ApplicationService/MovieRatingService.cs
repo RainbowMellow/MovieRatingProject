@@ -157,6 +157,11 @@ namespace MovieRatingProject.Core.ApplicationService
                   .OrderByDescending(r => r.Grade)
                   .ThenByDescending(r => r.Date);
 
+            if(movies.Any() == false)
+            {
+                throw new ArgumentException("This reviewer has not made any reviews yet.");
+            }
+
             return movies
                    .Select(r => r.Movie)
                    .ToList();
@@ -168,6 +173,11 @@ namespace MovieRatingProject.Core.ApplicationService
                   .Where(r => r.Movie == movie)
                   .OrderByDescending(r => r.Grade)
                   .ThenByDescending(r => r.Date);
+
+            if (movies.Any() == false)
+            {
+                throw new ArgumentException("No reviews for this movie.");
+            }
 
             return movies
                    .Select(r => r.Reviewer)
