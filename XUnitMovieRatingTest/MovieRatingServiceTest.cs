@@ -232,6 +232,48 @@ namespace XUnitMovieRatingTest
 
         #endregion
 
+        #region 6. On input N and R, how many times had movie N received rate R?
+
+        [Theory]
+        [InlineData(2, 3, 1)]
+        [InlineData(3, 5, 3)]
+        public void GetNumberOfRates(int movie, int rate, int expetedresult)
+        {
+            ratings = new List<MovieRating>()
+            {
+                new MovieRating(1, 2, 3, DateTime.Now),
+                new MovieRating(1, 3, 5, DateTime.Now),
+                new MovieRating(2, 3, 5, DateTime.Now),
+                new MovieRating(3, 3, 5, DateTime.Now)
+            };
+
+            MovieRatingService mrs = new MovieRatingService(repoMock.Object);
+            int result = mrs.GetNumberOfRates(movie, rate);
+
+            Assert.Equal(expetedresult, result);
+            repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Once);
+
+        }
+
+        [Fact]
+        public void GetNumberOfRatesArgumentException()
+        {
+            ratings = new List<MovieRating>()
+            {
+                new MovieRating(1, 2, 3, DateTime.Now),
+                new MovieRating(1, 3, 5, DateTime.Now),
+                new MovieRating(2, 3, 5, DateTime.Now),
+                new MovieRating(3, 3, 5, DateTime.Now)
+            };
+
+            MovieRatingService mrs = new MovieRatingService(repoMock.Object);
+
+            var ex = Assert.Throws<ArgumentException>(() => { int result = mrs.GetNumberOfRates(1, 5); });
+
+            Assert.Equal("No reviews for this movie.", ex.Message);
+        }
+
+        #endregion
 
         #region 7. What is the id(s) of the movie(s) with the highest number of top rates (5)? 
         [Fact]
@@ -239,14 +281,14 @@ namespace XUnitMovieRatingTest
         {
             ratings = new List<MovieRating>()
             {
-                new MovieRating(1, 1, 5, DateTime.Now),
-                new MovieRating(1, 2, 5, DateTime.Now),
+               new MovieRating(1, 1, 5, DateTime.Now),
+               new MovieRating(1, 2, 5, DateTime.Now),
 
-                new MovieRating(2, 1, 4, DateTime.Now),
-                new MovieRating(2, 2, 5, DateTime.Now),
+               new MovieRating(2, 1, 4, DateTime.Now),
+               new MovieRating(2, 2, 5, DateTime.Now),
 
-                new MovieRating(2, 3, 5, DateTime.Now),
-                new MovieRating(3, 3, 5, DateTime.Now),
+               new MovieRating(2, 3, 5, DateTime.Now),
+               new MovieRating(3, 3, 5, DateTime.Now),
             };
 
             MovieRatingService mrs = new MovieRatingService(repoMock.Object);
@@ -261,6 +303,49 @@ namespace XUnitMovieRatingTest
             repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Once);
 
         }
+        #endregion
+
+        #region 8. What reviewer(s) had done most reviews?
+
+        [Fact]
+        public void GetMostProductiveReviewers()
+        {
+            ratings = new List<MovieRating>()
+            {
+               new MovieRating(2, 1, 5, DateTime.Now),
+               new MovieRating(2, 2, 5, DateTime.Now),
+               new MovieRating(2, 3, 4, DateTime.Now),
+               new MovieRating(2, 4, 5, DateTime.Now),
+
+               new MovieRating(3, 2, 5, DateTime.Now),
+               new MovieRating(3, 3, 5, DateTime.Now),
+
+               new MovieRating(4, 3, 5, DateTime.Now),
+               new MovieRating(4, 4, 5, DateTime.Now),
+               new MovieRating(4, 5, 5, DateTime.Now),
+               new MovieRating(4, 6, 5, DateTime.Now),
+            };
+
+            MovieRatingService mrs = new MovieRatingService(repoMock.Object);
+
+            List<int> expected = new List<int>() { 2, 4 };
+
+
+            var result = mrs.GetMostProductiveReviewers();
+
+            Assert.Equal(expected, result);
+            repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Once);
+        }
+
+        #endregion
+
+        #region 9. On input N, what is top N of movies? The score of a movie is its average rate.
+        public void GetTopRatedMovies(int amount)
+        {
+
+
+        }
+
         #endregion
     }
 }
