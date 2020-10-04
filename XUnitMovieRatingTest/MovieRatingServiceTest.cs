@@ -365,6 +365,7 @@ namespace XUnitMovieRatingTest
                 var result = mrs.GetTopRatedMovies(n);
 
                 Assert.Equal(new List<int>(expected), result);
+            repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Once);
 
             }
 
