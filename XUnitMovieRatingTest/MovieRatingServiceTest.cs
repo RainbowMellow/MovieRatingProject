@@ -341,12 +341,34 @@ namespace XUnitMovieRatingTest
         #endregion
 
         #region 9. On input N, what is top N of movies? The score of a movie is its average rate.
-<<<<<<< Updated upstream
-        //public void GetTopRatedMovies(int amount)
-        //{
 
 
-        //}
+            [Theory]
+            [InlineData(1, new int[] { 4 })]
+            [InlineData(2, new int[] { 4, 1 })]
+            [InlineData(4, new int[] { 4, 1, 2, 3 })]
+            [InlineData(10, new int[] { 4, 1, 2, 3 })]
+            public void GetTopRatedMovies(int n, int[] expected)
+            {
+                ratings = new List<MovieRating>()
+            {
+                new MovieRating(1, 2, 3, DateTime.Now),     // movie 1 avg = 4                                                            
+                new MovieRating(1, 3, 2, DateTime.Now),     // movie 2 avg = 3
+                new MovieRating(2, 1, 4, DateTime.Now),     // movie 3 avg = 2.5
+                new MovieRating(2, 3, 3, DateTime.Now),     // movie 4 avg = 4.5
+                new MovieRating(2, 4, 4, DateTime.Now),
+                new MovieRating(3, 4, 5, DateTime.Now)
+            };
+
+                MovieRatingService mrs = new MovieRatingService(repoMock.Object);
+
+                var result = mrs.GetTopRatedMovies(n);
+
+                Assert.Equal(new List<int>(expected), result);
+
+            }
+
+        
 
         #endregion
 
@@ -407,30 +429,7 @@ namespace XUnitMovieRatingTest
             var ex = Assert.Throws<ArgumentException>(() => { List<int> result = mrs.GetTopMoviesByReviewer(1); });
 
             Assert.Equal("This reviewer has not made any reviews yet.", ex.Message);
-=======
-        [Theory]
-        [InlineData(1, new int[] { 4 })]
-        [InlineData(2, new int[] { 4, 1 })]
-        [InlineData(4, new int[] { 4, 1, 2, 3 })]
-        [InlineData(10, new int[] { 4, 1, 2, 3 })]
-        public void GetTopRatedMovies(int n, int[] expected)
-        {
-            ratings = new List<MovieRating>()
-            {
-                new MovieRating(1, 2, 3, DateTime.Now),     // movie 1 avg = 4                                                            
-                new MovieRating(1, 3, 2, DateTime.Now),     // movie 2 avg = 3
-                new MovieRating(2, 1, 4, DateTime.Now),     // movie 3 avg = 2.5
-                new MovieRating(2, 3, 3, DateTime.Now),     // movie 4 avg = 4.5
-                new MovieRating(2, 4, 4, DateTime.Now),
-                new MovieRating(3, 4, 5, DateTime.Now)
-            };
 
-            MovieRatingService mrs = new MovieRatingService(repoMock.Object);
-
-            var result = mrs.GetTopRatedMovies(n);
-
-            Assert.Equal(new List<int>(expected), result);
->>>>>>> Stashed changes
         }
 
         #endregion
@@ -491,7 +490,6 @@ namespace XUnitMovieRatingTest
             Assert.Equal("No reviews for this movie.", ex.Message);
         }
         #endregion
-
 
     }
 }
