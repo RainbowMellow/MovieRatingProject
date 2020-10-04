@@ -133,18 +133,17 @@ namespace MovieRatingProject.Core.ApplicationService
 
         public List<int> GetMostProductiveReviewers()
         {
-            var movie5 = RatingRepo.GetAllMovieRatings()
-                  //.Where(r => r.Grade == 5)
+            var reviewes = RatingRepo.GetAllMovieRatings()
                   .GroupBy(r => r.Reviewer)
                   .Select(group => new {
                       Reviewer = group.Key,
                       Movie = group.Count()
                   });
 
-            int max5 = movie5.Max(grp => grp.Movie);
+            int maxReview = reviewes.Max(grp => grp.Movie);
 
-            return movie5
-                   .Where(grp => grp.Movie == max5)
+            return reviewes
+                   .Where(grp => grp.Movie == maxReview)
                    .Select(grp => grp.Reviewer)
                    .ToList();
 
@@ -182,6 +181,21 @@ namespace MovieRatingProject.Core.ApplicationService
             return movies
                    .Select(r => r.Reviewer)
                    .ToList();
+        }
+
+        public object GetTopRatedMovies(int amount)
+        {
+            return RatingRepo.GetAllMovieRatings()
+              .GroupBy(r => r.Movie)
+              .Select(grp => new
+              {
+                  Movie = grp.Key,
+                  GradeAvg = grp.Average(x => x.Grade)
+              })
+              .OrderByDescending(grp => grp.GradeAvg)
+              .Select(grp => grp.Movie)
+              .Take(amount)
+              .ToList();
         }
     }
 }
