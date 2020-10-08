@@ -9,7 +9,6 @@ namespace MovieRatingProject.Core.DomainService
     {
         IList<MovieRating> GetAllMovieRatings();
 
-
-
+        MovieRating[] Ratings { get; }
     }
 }
